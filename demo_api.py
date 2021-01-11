@@ -1,7 +1,8 @@
 import asyncio
 import json
 import os
-from flask import Flask, request, make_response, send_file
+import random
+from flask import Flask, request, make_response, send_file, jsonify
 from flask_restful import Resource, Api
 from src.server.eva_db_api import connect_async
 from create_video import create_video_from_frames
@@ -13,25 +14,21 @@ input = []
 
 
 class RequestFrames(Resource):
+
+    request_id = 0
+    
     def post(self):
-        
+        RequestFrames.request_id = RequestFrames.request_id + 1
         params = request.get_json()
         #query = create_query(params)
-        #query = 'SELECT id,data FROM MyVideo WHERE id < 5;'
-        query1 = "CREATE UDF FastRCNNObjectDetector INPUT (Frame_Array NDARRAY (3, 256, 256)) OUTPUT (label TEXT(10)) TYPE Classification IMPL 'src/udfs/fastrcnn_object_detector.py';"
-        query2 = "SELECT id, FastRCNNObjectDetector(data) FROM MyVideo WHERE id < 5;"
-        #query_list = [query1, query2]
-        query_list = [query2]
+        query = 'SELECT id,data FROM MyVideo WHERE id < 5;'
+        query_list = [query]
         frames = asyncio.run(get_frames(query_list))
-        print(frames)
         print("calling create video")
-        #video = create_video_from_frames(frames._batch)
-        #response = make_response(frames.to_json(), 201)
-        #curr_directory = os.getcwd()
-        #video_path = os.path.join(curr_directory, video)
-        #return send_file(video_path, 'video/mp4')
-        return json.dumps({'video name': video})
-        
+        video_name = generate_video_name(params, RequestFrames.request_id)        
+        create_video_from_frames(frames._batch, video_name)
+        return jsonify({"name": video_name})
+
 async def get_frames(query_list):
     hostname = '0.0.0.0'
     port = 5432
@@ -61,6 +58,12 @@ def create_query(req):
 	query = query + ";"
 	
 	return query
+
+def generate_video_name(query: str, num: int):
+    n = random.randrange(0,100000,1)
+    name = "result" + str(num) + "_" + str(n) + ".mp4"
+    return name
+
 	  
 api.add_resource(RequestFrames, '/api/queryeva')
 
