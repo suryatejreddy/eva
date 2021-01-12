@@ -1,0 +1,16 @@
+name: minst
+channels:
+  - conda-forge
+  - anaconda
+  - defaults
+dependencies:
+  - python=3.7.6
+  - pandas
+  - numpy
+  - opencv
+  - matplotlib
+  - scikit-learn
+  - keras
+  - tensorflow
+  - h5py=2.10.0
+prefix: minst

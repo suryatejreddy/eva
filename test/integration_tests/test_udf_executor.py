@@ -90,3 +90,33 @@ class UDFExecutorTest(unittest.TestCase):
                          for i in range(2, NUM_FRAMES)
                          if i % 2 == 0]))[0]
         self.assertEqual(actual_batch, expected_batch)
+
+    def test_mnist_udf(self):
+        load_query = """LOAD DATA INFILE 'data/mnist/mnist.mp4' INTO
+                        MnistDataset;"""
+        perform_query(load_query)
+
+        create_udf_query = """CREATE UDF MnistCNN
+                  INPUT  (Frame_Array NDARRAY (3, 28, 28))
+                  OUTPUT (label TEXT(2))
+                  TYPE  Classification
+                  IMPL  'udfs/digit_recognition.py';
+        """
+        perform_query(create_udf_query)
+
+        select_query = """SELECT id, MnistCNN(data) FROM MnistDataset
+                          WHERE id < 10;"""
+        actual_batch = perform_query(select_query)
+        actual_batch.sort()
+        expected_labels = ['6'] * 6 + ['4'] * 4
+        expected_batch = Batch(
+            frames=pd.DataFrame(
+                [
+                    {'id': i,
+                     'label': expected_labels[i]
+                    }
+                    for i in range(10)
+                ]
+            )
+        )
+        self.assertEqual(actual_batch, expected_batch)

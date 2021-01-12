@@ -18,8 +18,10 @@ dependencies:
   - autoflake
   - pytorch::torchvision
   - pytorch::pytorch
+  - keras
   - tensorflow
   - tensorboard
+  - h5py=2.10.0
   - pillow=6.1
   - sqlalchemy
   - pymysql
@@ -29,7 +31,6 @@ dependencies:
   - flake8
   - sphinx 
   - sphinx_rtd_theme
-  - pytesseract
   - pip:
     - antlr4-python3-runtime==4.8
     - petastorm
