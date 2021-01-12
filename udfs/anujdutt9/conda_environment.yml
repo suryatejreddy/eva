@@ -1,4 +1,4 @@
-name: minst
+name: mnist
 channels:
   - conda-forge
   - anaconda
@@ -13,4 +13,4 @@ dependencies:
   - keras
   - tensorflow
   - h5py=2.10.0
-prefix: minst
+prefix: mnist
