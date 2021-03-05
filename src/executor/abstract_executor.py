@@ -18,6 +18,9 @@ from typing import List
 from src.planner.abstract_plan import AbstractPlan
 
 
+UPSTREAM_BATCH = 'UPSTREAM_BATCH'
+
+
 class AbstractExecutor(ABC):
     """
     An abstract class for the executor engine
@@ -56,7 +59,7 @@ class AbstractExecutor(ABC):
         NotImplementedError('Must be implemented in subclasses.')
 
     @abstractmethod
-    def exec(self):
+    def exec(self, *args, **kwargs):
         """
         This method is implemented by every executor.
         Contains logic for that executor;

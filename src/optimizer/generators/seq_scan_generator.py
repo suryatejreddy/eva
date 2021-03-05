@@ -22,7 +22,7 @@ from src.planner.storage_plan import StoragePlan
 from src.planner.orderby_plan import OrderByPlan
 from src.planner.limit_plan import LimitPlan
 from src.planner.nested_loop_join_plan import NestedLoopJoin
-from src.planner.function_scan import FunctionScan
+from src.planner.function_scan import FunctionScanPlan
 
 
 class ScanGenerator(Generator):
@@ -75,7 +75,7 @@ class ScanGenerator(Generator):
             self._visit(child)
 
         if isinstance(operator, LogicalFunctionScan):
-            self._plan = FunctionScan(operator.func_expr)
+            self._plan = FunctionScanPlan(operator.func_expr)
 
         if isinstance(operator, LogicalJoin):
             self._visit_logical_join(operator)

@@ -13,8 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from typing import Iterator
+
 from src.models.storage.batch import Batch
 from src.executor.abstract_executor import AbstractExecutor
+from src.executor.abstract_executor import UPSTREAM_BATCH
 from src.planner.storage_plan import StoragePlan
 from src.storage.storage_engine import StorageEngine
 
@@ -27,5 +29,20 @@ class StorageExecutor(AbstractExecutor):
     def validate(self):
         pass
 
-    def exec(self) -> Iterator[Batch]:
-        return StorageEngine.read(self.node.video)
+    def exec(self, *args, **kwargs) -> Iterator[Batch]:
+        """
+            Join upstream batch with current_batch.
+            The upstream batch is received in case of lateral joins.
+            upstream_batch = [u1, u2, u3, u4]
+            current_batch = [c1, c2, c3]
+            joined_batch = [c1-u1, c1-u2, c1-u3, c1-u4,
+                            c2-u1, c2-u2, c2-u3, c2-u4]
+        """
+        for batch in StorageEngine.read(self.node.video):
+            upstream_batch = kwargs.pop(UPSTREAM_BATCH, Batch())
+            if not upstream_batch.empty():
+                b1 = upstream_batch.frames
+                b2 = batch.frames
+                b1['__id'] = b2['__id'] = 0
+                res = b1.merge(b2, how='outer')
+                yield Batch(res)

@@ -35,10 +35,10 @@ class SequentialScanExecutor(AbstractExecutor):
     def validate(self):
         pass
 
-    def exec(self) -> Iterator[Batch]:
+    def exec(self, *args, **kwargs) -> Iterator[Batch]:
 
         child_executor = self.children[0]
-        for batch in child_executor.exec():
+        for batch in child_executor.exec(*args, **kwargs):
             # We do the predicate first
             if not batch.empty() and self.predicate is not None:
                 outcomes = self.predicate.evaluate(batch).frames

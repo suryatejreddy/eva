@@ -58,3 +58,15 @@ class PytorchTest(unittest.TestCase):
         res = actual_batch.frames
         for idx in res.index:
             self.assertTrue('car' in res['label'][idx])
+
+    def test_should_work_with_lateral_join(self):
+        query = """LOAD DATA INFILE 'data/ua_detrac/ua_detrac.mp4'
+                   INTO MyVideo;"""
+        perform_query(query)
+        query = """SELECT id, labels, bboxes FROM MyVideo,
+                LATERAL UNNEST(FastRCNNObjectDetector(frame)) WHERE id < 10;"""
+        perform_query(query)
+
+
+if __name__ == '__main__':
+    unittest.main()

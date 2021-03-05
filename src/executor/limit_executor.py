@@ -38,11 +38,11 @@ class LimitExecutor(AbstractExecutor):
     def validate(self):
         pass
 
-    def exec(self) -> Iterator[Batch]:
+    def exec(self, *args, **kwargs) -> Iterator[Batch]:
         child_executor = self.children[0]
         remaining_tuples = self._limit_count
         # aggregates the batches into one large batch
-        for batch in child_executor.exec():
+        for batch in child_executor.exec(*args, **kwargs):
             if len(batch) > remaining_tuples:
                 yield batch[:remaining_tuples]
                 return

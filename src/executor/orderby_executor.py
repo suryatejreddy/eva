@@ -55,12 +55,12 @@ class OrderByExecutor(AbstractExecutor):
                 sort_type_bools.append(False)
         return sort_type_bools
 
-    def exec(self) -> Iterator[Batch]:
+    def exec(self, *args, **kwargs) -> Iterator[Batch]:
         child_executor = self.children[0]
         aggregated_batch_list = []
 
         # aggregates the batches into one large batch
-        for batch in child_executor.exec():
+        for batch in child_executor.exec(*args, **kwargs):
             self.batch_sizes.append(batch.batch_size)
             aggregated_batch_list.append(batch)
         aggregated_batch = Batch.concat(aggregated_batch_list, copy=False)

@@ -34,12 +34,12 @@ class UnionExecutor(AbstractExecutor):
     def validate(self):
         pass
 
-    def exec(self) -> Iterator[Batch]:
+    def exec(self, *args, **kwargs) -> Iterator[Batch]:
         if self.node.all is False:
             LoggingManager().log('Only UNION ALL is supported now.',
                                  LoggingLevel.WARNING)
 
         # We should have only two children
         for child in self.children:
-            for batch in child.exec():
+            for batch in child.exec(*args, **kwargs):
                 yield batch

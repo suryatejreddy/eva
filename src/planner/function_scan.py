@@ -18,7 +18,7 @@ from src.planner.abstract_plan import AbstractPlan
 from src.expression.function_expression import FunctionExpression
 
 
-class FunctionScan(AbstractPlan):
+class FunctionScanPlan(AbstractPlan):
     """
     This plan used to store metadata to perform function table scan.
 

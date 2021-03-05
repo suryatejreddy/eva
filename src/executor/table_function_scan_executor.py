@@ -14,31 +14,33 @@
 # limitations under the License.
 from typing import Iterator
 
-from src.readers.opencv_reader import OpenCVReader
 from src.models.storage.batch import Batch
-from src.executor.abstract_storage_executor import \
-    AbstractStorageExecutor
-from src.planner.storage_plan import StoragePlan
+from src.executor.abstract_executor import AbstractExecutor
+from src.executor.abstract_executor import UPSTREAM_BATCH
+from src.planner.function_scan import FunctionScanPlan
 
 
-class DiskStorageExecutor(AbstractStorageExecutor):
+class TableFunctionScanExecutor(AbstractExecutor):
     """
-    This is a simple disk based executor. It assumes that frames are
-    directly being read from the disk(video file).
+    Executes functional expression which yields a table of rows
+    Arguments:
+        node (AbstractPlan): FunctionScanPlan
 
-    Note: For a full fledged deployment this might be replaced with a
-    Transaction manager which keeps track of the frames.
     """
 
-    def __init__(self, node: StoragePlan):
+    def __init__(self, node: FunctionScanPlan):
         super().__init__(node)
-        self.storage = OpenCVReader(node.video,
-                                    batch_size=node.batch_size,
-                                    offset=node.offset)
+        self.func_expr = node.func_expr
 
     def validate(self):
         pass
 
     def exec(self, *args, **kwargs) -> Iterator[Batch]:
-        for batch in self.storage.read():
-            yield batch
+
+        # check if leaf node
+        if len(self.children) == 0:
+            batch = kwargs.pop(UPSTREAM_BATCH, Batch())
+            if not batch.empty():
+                yield self.func_expr.evaluate(batch)
+            else:
+                yield batch
