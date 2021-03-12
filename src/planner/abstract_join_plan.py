@@ -16,6 +16,8 @@
 
 """Abstract class for all the join planners
 """
+from typing import List
+
 from src.expression.abstract_expression import AbstractExpression
 from src.planner.abstract_plan import AbstractPlan
 from src.parser.types import JoinType
@@ -31,15 +33,19 @@ class AbstractJoin(AbstractPlan):
             type of join, INNER, OUTER , LATERAL etc
         join_predicate: AbstractExpression
             An expression used for joining
+        join_project: List[AbstractExpression]
+            list of expressions to be projected after joining
     """
 
     def __init__(self,
                  node_type: PlanNodeType,
                  join_type: JoinType,
-                 join_predicate: AbstractExpression):
+                 join_predicate: AbstractExpression,
+                 join_project: List[AbstractExpression]):
         super().__init__(node_type)
         self._join_type = join_type
         self._join_predicate = join_predicate
+        self._join_project = join_project
 
     @property
     def join_type(self) -> AbstractExpression:
@@ -48,3 +54,7 @@ class AbstractJoin(AbstractPlan):
     @property
     def join_predicate(self) -> AbstractExpression:
         return self._join_predicate
+
+    @property
+    def join_project(self) -> List[AbstractExpression]:
+        return self._join_project

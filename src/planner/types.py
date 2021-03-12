@@ -27,6 +27,6 @@ class PlanNodeType(IntEnum):
     UNION = auto()
     ORDER_BY = auto()
     LIMIT = auto()
-    JOIN = auto()
+    NESTED_LOOP_JOIN = auto()
     FUNCTION_SCAN = auto()
     # add other types

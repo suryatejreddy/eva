@@ -28,6 +28,7 @@ from src.executor.load_executor import LoadDataExecutor
 from src.executor.storage_executor import StorageExecutor
 from src.executor.union_executor import UnionExecutor
 from src.executor.orderby_executor import OrderByExecutor
+from src.executor.nested_loop_join_executor import NestedLoopJoinExecutor
 
 
 class PlanExecutor:
@@ -79,7 +80,8 @@ class PlanExecutor:
             executor_node = OrderByExecutor(node=plan)
         elif plan_node_type == PlanNodeType.LIMIT:
             executor_node = LimitExecutor(node=plan)
-
+        elif plan_node_type == PlanNodeType.NESTED_LOOP_JOIN:
+            executor_node = NestedLoopJoinExecutor(node=plan)
         # Build Executor Tree for children
         for children in plan.children:
             executor_node.append_child(self._build_execution_tree(children))

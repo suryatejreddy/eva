@@ -12,6 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from typing import List
 
 from src.planner.types import PlanNodeType
 from src.planner.abstract_join_plan import AbstractJoin
@@ -30,5 +31,9 @@ class NestedLoopJoin(AbstractJoin):
 
     def __init__(self,
                  join_type: JoinType,
-                 join_predicate: AbstractExpression):
-        super().__init__(PlanNodeType.JOIN, join_type, join_predicate)
+                 join_predicate: AbstractExpression,
+                 join_project: List[AbstractExpression]):
+        super().__init__(PlanNodeType.NESTED_LOOP_JOIN,
+                         join_type,
+                         join_predicate,
+                         join_project)

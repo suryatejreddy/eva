@@ -34,7 +34,8 @@ class NestedJoinExecutorTest(unittest.TestCase):
         inner = TableFunctionScanExecutor(node=plan)
         nested_loop_plan = type('NestedLoopJoin', (), {
                                 'join_type': JoinType.LATERAL_JOIN,
-                                'join_predicate': None})
+                                'join_predicate': None,
+                                'join_project': None})
         nested_loop_executor = NestedLoopJoinExecutor(nested_loop_plan)
         nested_loop_executor.append_child(outer)
         nested_loop_executor.append_child(inner)
