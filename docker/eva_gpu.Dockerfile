@@ -1,4 +1,4 @@
-FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04
+FROM nvidia/cuda:11.4.2-cudnn8-devel-ubuntu18.04
 
 ARG PYTHON_VERSION=3.8
 
@@ -24,7 +24,7 @@ COPY . /app
 RUN ~/miniconda/bin/conda env create -f /app/script/install/conda_eva_environment.yml
 
 # sanity check for GPU
-RUN ~/miniconda/bin/conda run -n eva python -c "import torch; torch.randn(1).cuda()"
+# RUN ~/miniconda/bin/conda run -n eva python -c "import torch; torch.randn(1).cuda()"
 
 # generate eva-ql parser
 RUN wget https://www.antlr.org/download/antlr-4.8-complete.jar -O ~/antlr.jar \
