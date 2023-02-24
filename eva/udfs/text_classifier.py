@@ -64,8 +64,8 @@ class TextClassifier(AbstractClassifierUDF):
         """
         model_input = text_dataframe.squeeze().values.tolist()
         model_output = self.model(model_input)
-        final_out = pd.DataFrame.from_dict(model_output, orient='columns')
+        final_out = pd.DataFrame.from_dict(model_output, orient="columns")
         # rename columns in final_out
-        final_out.rename(columns={'label': 'labels', 'score': 'scores'}, inplace=True)
+        final_out.rename(columns={"label": "labels", "score": "scores"}, inplace=True)
         # reconstruct dimension of the input
         return final_out
