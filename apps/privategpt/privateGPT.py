@@ -12,45 +12,47 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import os
+
+from gpt4all import GPT4All
+
 import evadb
-from evadb.configuration.constants import EvaDB_ROOT_DIR
 
-cursor = evadb.connect().cursor()
+llm = GPT4All("ggml-gpt4all-j-v1.3-groovy")
+llm.model.set_thread_count(16)
 
-def setup_udfs():
-
-    embedding_udf = cursor.create_udf(udf_name="embedding", if_not_exists=True, impl_path='evadb/udfs/sentence_feature_extractor.py')
-    embedding_udf.execute()
-
-    prompt_udf = cursor.create_udf(udf_name="prompt_generator", if_not_exists=True, impl_path='evadb/udfs/prompt_generator.py')
-    prompt_udf.execute()
-
-    gpt4all_udf = cursor.create_udf(udf_name="custom_gpt4all", if_not_exists=True, impl_path='evadb/udfs/custom_gpt4all.py')
-    gpt4all_udf.execute()
-
+path = os.path.dirname(evadb.__file__)
+cursor = evadb.connect(path).cursor()
 
 
 def query(question):
-    response = cursor.query(
-        f"""SELECT custom_gpt4all(prompt_generator(data, '{question}')) FROM embedding_table
-        ORDER BY Similarity(embedding('{question}'),features)
-        LIMIT 4;"""
-    ).execute()
+    context_docs = (
+        cursor.table("embedding_table")
+        .order(f"Similarity(embedding('{question}'), features)")
+        .limit(3)
+        .select("data")
+        .df()
+    )
+    # Merge all context information.
+    context = "; \n".join(context_docs["embedding_table.data"])
 
-    return response.frames.iloc[0][0]
+    # run llm
+    messages = [
+        {"role": "user", "content": f"Here is some context:{context}"},
+        {
+            "role": "user",
+            "content": f"Answer this question based on context: {question}",
+        },
+    ]
+    return llm.chat_completion(messages, verbose=False, streaming=False)
 
-
-
-setup_udfs()
 
 ## Take input of queries from user in a loop
 while True:
-    question = input("Enter your question: ")
+    question = input("Enter your question (type 'exit' to stop): ")
     if question == "exit":
         break
     answer = query(question)
 
-    print("\n\n> Question:")
-    print(query)
     print("\n> Answer:")
-    print(answer)
+    print(answer["choices"][0]["message"]["content"])

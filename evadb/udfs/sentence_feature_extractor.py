@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright 2018-2023 EVA
+# Copyright 2018-2023 EvaDB
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ class SentenceFeatureExtractor(AbstractUDF, GPUCompatible):
         self.model = AutoModel.from_pretrained("sentence-transformers/all-MiniLM-L6-v2")
 
     def to_device(self, device: str) -> GPUCompatible:
-        print("Device", device)
         self.model_device = device
         self.model = self.model.to(device)
         return self
