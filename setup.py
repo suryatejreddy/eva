@@ -49,16 +49,16 @@ minimal_requirement = [
     "pyyaml>=5.1",
     "importlib-metadata<5.0",
     "ray>=1.13.0,<2.5.0", # breaking change in 2.5.0
+    "retry>=0.9.2",
     "aenum>=2.2.0",
     "diskcache>=5.4.0",
-    "eva-decord>=0.6.1",
     "boto3",
     "nest_asyncio",
     "langchain",
     "pymupdf",
     "pdfminer.six",
-    "sentence-transformers"
-
+    "sentence-transformers",
+    "eva-decord>=0.6.1", # for processing videos
 ]
 
 formatter_libs = ["black>=23.1.0", "isort>=5.10.1"]
@@ -119,7 +119,7 @@ udf_libs = [
     "norfair>=2.2.0",  # OBJECT TRACKING
 ]
 
-### NEEDED FOR EXPERIMENTAL FEATURES
+### NEEDED FOR A BATTERIES-LOADED EXPERIENCE
 third_party_libs = [
     "qdrant-client>=1.1.7",  # Qdrant vector store client
     "kornia",  # SIFT features
@@ -169,8 +169,8 @@ setup(
     # https://python-packaging.readthedocs.io/en/latest/command-line-scripts.html#the-console-scripts-entry-point
     entry_points={
         "console_scripts": [
-            "eva_server=evadb.evadb_server:main",
-            "eva_client=evadb.evadb_cmd_client:main",
+            "evadb_server=evadb.evadb_server:main",
+            "evadb_client=evadb.evadb_cmd_client:main",
         ]
     },
     python_requires=">=3.8",

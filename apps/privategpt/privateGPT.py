@@ -18,9 +18,6 @@ from gpt4all import GPT4All
 
 import evadb
 
-llm = GPT4All("ggml-gpt4all-j-v1.3-groovy")
-llm.model.set_thread_count(16)
-
 path = os.path.dirname(evadb.__file__)
 cursor = evadb.connect(path).cursor()
 
@@ -44,15 +41,24 @@ def query(question):
             "content": f"Answer this question based on context: {question}",
         },
     ]
-    return llm.chat_completion(messages, verbose=False, streaming=False)
+    llm = GPT4All("ggml-gpt4all-j-v1.3-groovy")
+    llm.model.set_thread_count(16)
 
+    answer = llm.chat_completion(messages, verbose=False, streaming=False)
+
+    print("\n> Answer:")
+    print(answer["choices"][0]["message"]["content"])
+    print("\n>> Context: ")
+    print(context)
+
+print(
+    "🔮 Welcome to EvaDB! Don't forget to run `python ingest.py` before running this file."
+)
 
 ## Take input of queries from user in a loop
 while True:
     question = input("Enter your question (type 'exit' to stop): ")
-    if question == "exit":
+    if question == "exit" or question == "stop":
         break
-    answer = query(question)
 
-    print("\n> Answer:")
-    print(answer["choices"][0]["message"]["content"])
+    query(question)

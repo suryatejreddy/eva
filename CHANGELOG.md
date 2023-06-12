@@ -10,6 +10,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### [Deprecated]
 ### [Removed]
 
+##  [0.2.11] - 2023-06-10
+
+* PR #856: Bump v0.2.11+dev 
+* PR #855: Release 0.2.10 
+* PR #854: fix: update sentence transformer udf 
+
+##  [0.2.10] - 2023-06-10
+
+* PR #852: feat: optional import of decord, fix for sentence feature extractor 
+* PR #851: Bump v0.2.10+dev 
+
+##  [0.2.9] - 2023-06-09
+
+* PR #849: app: add a text and mp4 file 
+* PR #833: app: Youtube qa app now supports long videos 
+* PR #848: app: minor updates 
+* PR #847: app: minor updates to privateGPT app 
+* PR #841: app: private gpt 
+* PR #845: docs: Index.rst docs 
+* PR #844: Bump v0.2.9+dev 
+
 ##  [0.2.8] - 2023-06-09
 
 * PR #842: docs: add pdf qa picture 
